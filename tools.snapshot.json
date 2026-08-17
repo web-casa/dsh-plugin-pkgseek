@@ -1,0 +1,794 @@
+[
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Search curated Linux command-line tools.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "search_tools",
+    "title": "Search Tools"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get a sourced tool record, commands, flags and distribution mappings.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool"
+      ],
+      "type": "object"
+    },
+    "name": "get_tool",
+    "title": "Get Tool"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Resolve a tool and distribution to its package, real binary and install command.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "tool": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool",
+        "distro"
+      ],
+      "type": "object"
+    },
+    "name": "resolve_install",
+    "title": "Resolve Install"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Reverse an executable name to curated tools and packages.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "binary": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "binary"
+      ],
+      "type": "object"
+    },
+    "name": "identify_binary",
+    "title": "Identify Binary"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Find packages that contain a command or filesystem path.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "query_file_provides",
+    "title": "Query File Provides"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Turn a package-not-found or command-not-found error into matching packages and install guidance.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "error": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        "release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "type": "object"
+    },
+    "name": "diagnose_linux_error",
+    "title": "Diagnose Linux Error"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Statically inspect a shell command for unsupported flags and portability issues. The command is never executed.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "type": "object"
+    },
+    "name": "lint_command",
+    "title": "Lint Command"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Explain and statically inspect a command using the Command Doctor knowledge base. The command is never executed.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "type": "object"
+    },
+    "name": "explain_command",
+    "title": "Explain Command"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Return conservative, sourced guidance for command syntax or portability problems. The command is never executed.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "type": "object"
+    },
+    "name": "suggest_fix",
+    "title": "Suggest Fix"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Compare installation names and commands for a tool across Linux distributions.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool"
+      ],
+      "type": "object"
+    },
+    "name": "compare_distros",
+    "title": "Compare Distros"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Search package names across repositories and distributions.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "query": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "search_packages",
+    "title": "Search Packages"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get package metadata, dependencies, files and vulnerability evidence for one distribution.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "repo": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "distro"
+      ],
+      "type": "object"
+    },
+    "name": "get_package",
+    "title": "Get Package"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Compare a package's versions and repositories across distributions.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "compare_package_versions",
+    "title": "Compare Package Versions"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Search cached CVE or CNNVD records, with optional distribution and severity filters.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "database": {
+          "default": "cve",
+          "enum": [
+            "cve",
+            "cnnvd"
+          ],
+          "type": "string"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "query": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "search_vulnerabilities",
+    "title": "Search Vulnerabilities"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get a cached CVE or CNNVD record and distribution-aware affected-package evidence.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "database": {
+          "default": "cve",
+          "enum": [
+            "cve",
+            "cnnvd"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^(CVE|CNNVD)-[A-Za-z0-9-]+$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_vulnerability",
+    "title": "Get Vulnerability"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Evaluate whether a Linux distribution release is active, nearing EOL or unsupported under a CI policy.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_security_support": {
+          "default": false,
+          "type": "boolean"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "fail_within_days": {
+          "default": 90,
+          "maximum": 3650,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "distro",
+        "release"
+      ],
+      "type": "object"
+    },
+    "name": "check_release_lifecycle",
+    "title": "Check Release Lifecycle"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "List cached lifecycle facts for a Linux distribution.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "distro"
+      ],
+      "type": "object"
+    },
+    "name": "get_distro_lifecycle",
+    "title": "Get Distro Lifecycle"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Compare package additions, removals and version changes between two releases.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "enum": [
+            "all",
+            "changed",
+            "added",
+            "removed",
+            "version_changed",
+            "unchanged"
+          ],
+          "type": "string"
+        },
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "from": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "query": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "to": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "distro",
+        "from",
+        "to"
+      ],
+      "type": "object"
+    },
+    "name": "compare_distro_releases",
+    "title": "Compare Distro Releases"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Map packages from one distribution release to another and report missing or ambiguous replacements.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "packages": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+            "type": "string"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "source_release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "target_distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "target_release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "packages",
+        "source_distro",
+        "source_release",
+        "target_distro",
+        "target_release"
+      ],
+      "type": "object"
+    },
+    "name": "plan_distro_migration",
+    "title": "Plan Distro Migration"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Trace indexed package version history for regression investigation.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "release": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "distro"
+      ],
+      "type": "object"
+    },
+    "name": "get_package_history",
+    "title": "Get Package History"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Read repository freshness, package counts and indexing health.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "freshness_hours": {
+          "default": 48,
+          "maximum": 720,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "name": "get_repository_health",
+    "title": "Get Repository Health"
+  },
+  {
+    "annotations": {
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "description": "Get a token-efficient context pack with trust and execution guardrails for an agent.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "distro": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+          "type": "string"
+        },
+        "locale": {
+          "enum": [
+            "en",
+            "zh-CN"
+          ],
+          "type": "string"
+        },
+        "tool": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool"
+      ],
+      "type": "object"
+    },
+    "name": "get_context",
+    "title": "Get Context"
+  }
+]
