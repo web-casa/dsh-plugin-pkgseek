@@ -18,11 +18,19 @@ interface GuidanceRule {
   tools: string[];
 }
 
-const GUIDANCE_RULES: GuidanceRule[] = [
+export const GUIDANCE_RULES: GuidanceRule[] = [
   { text: 'resolving "command not found" or "package not found" errors', tools: ['diagnose_linux_error'] },
   {
     text: 'giving install commands for a specific distro',
     tools: ['resolve_install', 'compare_distros', 'identify_binary', 'query_file_provides'],
+  },
+  {
+    text: 'searching packages and inspecting package metadata, versions and history',
+    tools: ['search_packages', 'get_package', 'compare_package_versions', 'get_package_history'],
+  },
+  {
+    text: 'looking up curated CLI tool records and token-efficient agent context packs',
+    tools: ['search_tools', 'get_tool', 'get_context'],
   },
   { text: 'checking CVE/CNNVD exposure', tools: ['search_vulnerabilities', 'get_vulnerability'] },
   {
@@ -37,6 +45,7 @@ const GUIDANCE_RULES: GuidanceRule[] = [
     text: 'statically inspecting a shell command for portability problems before running it',
     tools: ['lint_command', 'explain_command', 'suggest_fix'],
   },
+  { text: 'checking repository freshness and indexing health', tools: ['get_repository_health'] },
 ];
 
 const GUIDANCE_INTRO =
