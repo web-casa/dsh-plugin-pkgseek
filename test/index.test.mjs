@@ -71,3 +71,20 @@ test('enabledTools allowlist limits registration', async () => {
   await apply(ctx, { ...baseConfig, promptGuidance: false, enabledTools: ['resolve_install'] });
   assert.deepEqual(registered.map((tool) => tool.name), ['pkgseek_resolve_install']);
 });
+
+test('guidance only names tools that were actually registered', async () => {
+  const { ctx, registered, sections } = fakeCtx();
+  await apply(ctx, { ...baseConfig, enabledTools: ['resolve_install'] });
+  assert.equal(registered.length, 1);
+  assert.equal(sections.length, 1);
+  assert.match(sections[0].text, /pkgseek_resolve_install/);
+  assert.doesNotMatch(sections[0].text, /pkgseek_diagnose_linux_error/);
+  assert.doesNotMatch(sections[0].text, /pkgseek_get_vulnerability/);
+});
+
+test('an allowlist matching nothing registers no tools and no guidance', async () => {
+  const { ctx, registered, sections } = fakeCtx();
+  await apply(ctx, { ...baseConfig, enabledTools: ['no_such_tool'] });
+  assert.equal(registered.length, 0);
+  assert.equal(sections.length, 0);
+});

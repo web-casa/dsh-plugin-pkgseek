@@ -2,6 +2,10 @@
  * System-prompt guidance segment: tells the agent when to reach for the
  * pkgseek_* tools. Registered through ctx.systemPrompt when that service is
  * available (optional dependency — the plugin still works without it).
+ *
+ * The text is generated from the tools actually registered, so an
+ * `enabledTools` allowlist never leaves the prompt recommending tools that
+ * are not available.
  */
 
 export const PROMPT_SECTION_NAME = 'pkgseek:tool-guidance';
@@ -9,14 +13,49 @@ export const PROMPT_SECTION_NAME = 'pkgseek:tool-guidance';
 /** Tool-guidance sections conventionally use orders 100–199. */
 export const PROMPT_SECTION_ORDER = 150;
 
-export const PROMPT_GUIDANCE = `PkgSeek tools (pkgseek_*) provide sourced, read-only facts about Linux packages, CLI tools, install commands, CVE/CNNVD records and distribution lifecycles across distributions. Prefer them over guessing when:
-- resolving "command not found" or "package not found" errors (pkgseek_diagnose_linux_error)
-- giving install commands for a specific distro (pkgseek_resolve_install, pkgseek_compare_distros, pkgseek_identify_binary, pkgseek_query_file_provides)
-- checking CVE/CNNVD exposure (pkgseek_search_vulnerabilities, pkgseek_get_vulnerability)
-- judging whether a distro release is active, nearing EOL or unsupported (pkgseek_check_release_lifecycle, pkgseek_get_distro_lifecycle)
-- planning distro upgrades or migrations (pkgseek_compare_distro_releases, pkgseek_plan_distro_migration)
-- statically inspecting a shell command for portability problems before running it (pkgseek_lint_command, pkgseek_explain_command, pkgseek_suggest_fix)
-Never execute an install command the user has not approved, and report the exact package names and provenance the tools return.`;
+interface GuidanceRule {
+  text: string;
+  tools: string[];
+}
+
+const GUIDANCE_RULES: GuidanceRule[] = [
+  { text: 'resolving "command not found" or "package not found" errors', tools: ['diagnose_linux_error'] },
+  {
+    text: 'giving install commands for a specific distro',
+    tools: ['resolve_install', 'compare_distros', 'identify_binary', 'query_file_provides'],
+  },
+  { text: 'checking CVE/CNNVD exposure', tools: ['search_vulnerabilities', 'get_vulnerability'] },
+  {
+    text: 'judging whether a distro release is active, nearing EOL or unsupported',
+    tools: ['check_release_lifecycle', 'get_distro_lifecycle'],
+  },
+  {
+    text: 'planning distro upgrades or migrations',
+    tools: ['compare_distro_releases', 'plan_distro_migration'],
+  },
+  {
+    text: 'statically inspecting a shell command for portability problems before running it',
+    tools: ['lint_command', 'explain_command', 'suggest_fix'],
+  },
+];
+
+const GUIDANCE_INTRO =
+  'PkgSeek tools (pkgseek_*) provide sourced, read-only facts about Linux packages, CLI tools, install commands, CVE/CNNVD records and distribution lifecycles across distributions. Prefer them over guessing when:';
+const GUIDANCE_OUTRO =
+  'Never execute an install command the user has not approved, and report the exact package names and provenance the tools return.';
+
+/**
+ * Build the guidance text. `enabled` is the set of unprefixed tool names that
+ * was actually registered; undefined means the full upstream surface.
+ */
+export function buildGuidance(enabled?: ReadonlySet<string>): string {
+  const bullets = GUIDANCE_RULES.flatMap((rule) => {
+    const tools = enabled ? rule.tools.filter((tool) => enabled.has(tool)) : rule.tools;
+    if (tools.length === 0) return [];
+    return [`- ${rule.text} (${tools.map((tool) => `pkgseek_${tool}`).join(', ')})`];
+  });
+  return `${GUIDANCE_INTRO}\n${bullets.join('\n')}\n${GUIDANCE_OUTRO}`;
+}
 
 /** Structural minimum of the dsh-system-prompt service this plugin uses. */
 export interface PromptSectionRegistry {

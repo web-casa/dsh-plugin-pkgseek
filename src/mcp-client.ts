@@ -92,20 +92,26 @@ export class McpHttpClient {
   private async rpc(method: string, params: Record<string, unknown>, caller?: AbortSignal): Promise<JsonValue> {
     const id = this.nextId++;
     const { signal, release } = linkSignals(this.timeoutMs, caller);
-    let response: Awaited<ReturnType<FetchLike>>;
+    let body: string;
+    let ok: boolean;
+    let status: number;
     try {
-      response = await this.fetchImpl(`${this.apiBase.replace(/\/+$/, '')}/mcp`, {
+      // The timeout/abort link must stay live until the body is fully read:
+      // a stalled or slowly streamed body is still part of the request budget.
+      const response = await this.fetchImpl(`${this.apiBase.replace(/\/+$/, '')}/mcp`, {
         method: 'POST',
         headers: { 'content-type': 'application/json', accept: 'application/json' },
         body: JSON.stringify({ jsonrpc: '2.0', id, method, params }),
         signal,
       });
+      body = await response.text();
+      ok = response.ok;
+      status = response.status;
     } finally {
       release();
     }
-    const body = await response.text();
-    if (!response.ok) {
-      throw new Error(`PkgSeek API returned ${response.status}: ${body.slice(0, MAX_ERROR_EXCERPT)}`);
+    if (!ok) {
+      throw new Error(`PkgSeek API returned ${status}: ${body.slice(0, MAX_ERROR_EXCERPT)}`);
     }
     let message: { error?: { message?: string }; result?: JsonValue };
     try {

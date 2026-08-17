@@ -88,3 +88,19 @@ test('a pre-aborted caller signal aborts the request signal', async () => {
   await client.callTool('x', {}, caller.signal);
   assert.equal(calls[0].init.signal.aborted, true);
 });
+
+test('abort link stays live while the response body is read', async () => {
+  const caller = new AbortController();
+  let abortedDuringBody = null;
+  const client = new McpHttpClient('https://api.example.com', 5000, async (url, init) => ({
+    ok: true,
+    status: 200,
+    text: async () => {
+      caller.abort(new Error('cancelled mid-body'));
+      abortedDuringBody = init.signal.aborted;
+      return JSON.stringify({ jsonrpc: '2.0', id: 1, result: {} });
+    },
+  }));
+  await client.callTool('x', {}, caller.signal);
+  assert.equal(abortedDuringBody, true);
+});

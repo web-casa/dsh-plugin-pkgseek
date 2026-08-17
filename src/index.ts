@@ -11,7 +11,7 @@ import type { Context } from '@deepseek-ai/cordis';
 import Schema from '@deepseek-ai/schemastery';
 import { buildTool, selectTools } from './adapter.js';
 import { McpHttpClient, type McpToolDef } from './mcp-client.js';
-import { PROMPT_GUIDANCE, PROMPT_SECTION_NAME, PROMPT_SECTION_ORDER, type PromptSectionRegistry } from './prompt.js';
+import { buildGuidance, PROMPT_SECTION_NAME, PROMPT_SECTION_ORDER, type PromptSectionRegistry } from './prompt.js';
 
 export const name = 'pkgseek';
 export const inject = ['tools'];
@@ -61,14 +61,19 @@ export async function apply(ctx: Context, config: Config) {
     tools = loadSnapshot();
   }
 
-  for (const tool of selectTools(tools, config.enabledTools)) {
+  const selected = selectTools(tools, config.enabledTools);
+  for (const tool of selected) {
     ctx.tools.register(buildTool(tool, client, config.timeoutMs));
   }
 
-  if (config.promptGuidance) {
+  if (config.promptGuidance && selected.length > 0) {
     const registry = ctx.get('systemPrompt') as PromptSectionRegistry | undefined;
     if (typeof registry?.section === 'function') {
-      registry.section({ name: PROMPT_SECTION_NAME, order: PROMPT_SECTION_ORDER, text: PROMPT_GUIDANCE });
+      registry.section({
+        name: PROMPT_SECTION_NAME,
+        order: PROMPT_SECTION_ORDER,
+        text: buildGuidance(new Set(selected.map((tool) => tool.name))),
+      });
     } else {
       console.warn('[pkgseek] systemPrompt service unavailable; skipping prompt guidance');
     }
