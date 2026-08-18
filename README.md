@@ -1,5 +1,8 @@
 # dsh-plugin-pkgseek
 
+[![npm version](https://img.shields.io/npm/v/dsh-plugin-pkgseek)](https://www.npmjs.com/package/dsh-plugin-pkgseek)
+[![ci](https://github.com/web-casa/dsh-plugin-pkgseek/actions/workflows/ci.yml/badge.svg)](https://github.com/web-casa/dsh-plugin-pkgseek/actions/workflows/ci.yml)
+
 [PkgSeek](https://github.com/yeagoo/pkgseek) Linux package, command and CVE
 intelligence as native [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 (DSH) tools — plus a system-prompt segment that tells the agent when to use them.
@@ -20,6 +23,19 @@ dsh plugin --profile headless add dsh-plugin-pkgseek
 ```
 
 web and headless are separate profiles; install into both if you use both.
+The package is published on npm as
+[`dsh-plugin-pkgseek`](https://www.npmjs.com/package/dsh-plugin-pkgseek);
+`dsh plugin add` resolves it from the registry. Installing from the GitHub
+source also works (`dsh plugin --profile web add github:web-casa/dsh-plugin-pkgseek`).
+
+## Verification
+
+The 0.1.0 release was smoke-tested against a live `dsh` 0.1.0-rc.6 headless
+profile: the plugin loaded, fetched `tools/list` from the production API,
+registered `pkgseek_resolve_install`, the model called it, and the session
+log shows the API answer (`sudo apt install ripgrep`) flowing back through
+`tools/call`. Unit tests cover the JSON-RPC client, the schema adapter, the
+offline snapshot and the config surface (`npm test`).
 
 ## Configuration
 
