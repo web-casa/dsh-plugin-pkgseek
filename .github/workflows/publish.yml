@@ -1,0 +1,66 @@
+name: publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact unpublished package version to release
+        required: true
+        type: string
+      confirmation:
+        description: Type PUBLISH to confirm this irreversible npm release
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    # Keep the release source controlled: this workflow must be dispatched from
+    # main and requires an explicit human confirmation and exact version match.
+    if: github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH'
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.18.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Verify the requested version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          package_name="$(node -p "require('./package.json').name")"
+          package_version="$(node -p "require('./package.json').version")"
+          test "$package_version" = "$RELEASE_VERSION"
+          printf 'Publishing candidate %s@%s\n' "$package_name" "$package_version"
+
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+
+      - name: Test the candidate
+        run: npm test
+
+      - name: Pack the tested candidate
+        id: pack
+        run: |
+          set -euo pipefail
+          pack_dir="$(mktemp -d)"
+          npm pack --pack-destination "$pack_dir" --ignore-scripts --json > "$RUNNER_TEMP/npm-pack.json"
+          tarball="$(PACK_DIR="$pack_dir" node -e "const [pack] = require(process.env.RUNNER_TEMP + '/npm-pack.json'); process.stdout.write(process.env.PACK_DIR + '/' + pack.filename)")"
+          test -f "$tarball"
+          printf 'tarball=%s\n' "$tarball" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the tested artifact with npm OIDC
+        env:
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: |
+          set -euo pipefail
+          npm publish "$TARBALL" --access public --tag latest

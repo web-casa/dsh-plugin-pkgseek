@@ -90,6 +90,21 @@ Layout: `src/mcp-client.ts` (JSON-RPC over HTTP), `src/adapter.ts` (MCP tool
 definitions → `defineTool`), `src/prompt.ts` (guidance section),
 `src/index.ts` (wiring, config schema).
 
+## Release
+
+Releases are deliberately manual. An authorized maintainer dispatches the
+`publish.yml` workflow from `main`, enters the exact unpublished
+`package.json` version, and types `PUBLISH`. The workflow installs locked
+dependencies without lifecycle scripts, runs the tests, packs the tested
+artifact, then publishes it through npm Trusted Publishing (GitHub Actions
+OIDC). It has no npm write token and does not run for pushes or tags.
+
+The npm trusted-publisher binding is restricted to
+`web-casa/dsh-plugin-pkgseek`, `publish.yml`, and the `npm-publish`
+environment. Configure required reviewers for that GitHub environment and
+protect the default branch before delegating release authority; the workflow's
+manual confirmation is not a substitute for an independent review policy.
+
 ## License
 
 MIT
