@@ -28,10 +28,15 @@ The package is published on npm as
 `dsh plugin add` resolves it from the registry. Installing from the GitHub
 source also works (`dsh plugin --profile web add github:web-casa/dsh-plugin-pkgseek`).
 
+The published manifest declares support for DSH `>=0.1.0-rc.7 <0.2.0` on both
+the web and Desktop clients. That declaration lets a strict Cordis v4 catalog
+verify exact registry evidence; it does not by itself grant marketplace or
+Microsoft Store approval.
+
 ## Verification
 
-The 0.1.0 release was smoke-tested against a live `dsh` 0.1.0-rc.6 headless
-profile: the plugin loaded, fetched `tools/list` from the production API,
+The plugin was smoke-tested against a live `dsh` 0.1.0-rc.7 headless
+profile: it loaded, fetched `tools/list` from the production API,
 registered `pkgseek_resolve_install`, the model called it, and the session
 log shows the API answer (`sudo apt install ripgrep`) flowing back through
 `tools/call`. Unit tests cover the JSON-RPC client, the schema adapter, the

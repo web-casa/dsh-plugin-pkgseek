@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-pkgseek",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "PkgSeek Linux package, command and CVE intelligence as native DeepSeek Harness tools",
   "type": "module",
   "main": "lib/index.js",
@@ -21,6 +21,13 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "platforms": [
+      "web",
+      "desktop"
+    ],
+    "engines": {
+      "dsh": ">=0.1.0-rc.7 <0.2.0"
     }
   },
   "scripts": {

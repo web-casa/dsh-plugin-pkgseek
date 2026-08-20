@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-08-20
+
+- Declare `dsh.platforms` (`web`, `desktop`) and the supported DSH range
+  (`>=0.1.0-rc.7 <0.2.0`) in the published manifest. This is the exact
+  registry evidence required by the Cordis v4 catalog; it does not change the
+  plugin's runtime behavior or relax any client-side install gate.
+
 ## 0.1.0 — 2026-08-17
 
 First public release.
